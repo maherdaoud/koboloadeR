@@ -1,33 +1,77 @@
 Package: koboloadeR
 Type: Package
-Title: Retrieve Data Using the KoBo Toolbox API & Automatise data exploration
-Version: 0.1.5
-Authors@R: c(person("Edouard", "Legoupil", role = c("aut", "cre"),
-                     email = "legoupil@unhcr.org"),
-              person("Elliott", "Messeiller", role = "aut", email = "elliott.messeiller@acted.org"))
+Title: A metapackage for Survey Data Crunching
+Version: 0.1.6
+Authors@R: c(person("Edouard", "Legoupil", role = c("aut", "cre"),  email = "edouard.legoupil@gmail.com"),
+              person("Maher", "Daoud", role = "aut", email = "daoudma@unhcr.org"),
+              person("Elliott", "Messeiller", role = "ctb", email = "elliott.messeiller@acted.org"),
+              person("Damien", "Seite", role = "ctb", email = "damien.seite@eleve.ensai.fr"))
 Maintainer: Edouard Legoupil <legoupil@unhcr.org>
 Description: This package facilitates the data crunching & exploration for dataset collected using xlsform.
 License: GPL-3
 LazyData: TRUE
 Depends:
-    data.table (>= 1.9.4),
-    curl,
-    RCurl,
-    httr,
-    bit64,
-    readr,
-    DT,
-    plyr,
-    dplyr,
-    tidyr,
-    readxl,
+    utils
+Imports:
     ggplot2,
+    DDIwR,
+    DT,
+    glue,
+    ggthemes,
+    ggrepel, 
+    httr,
+    haven, 
+    OpenRepGrid,
+    plyr, 
+    RCurl,
+    readxl,
     reshape2,
-    digest,
+    readr,
+    rJava,
+    RODBC,
+    rstudioapi,
+    shiny,
+    shinydashboard,
+    shinyalert,
+    survey,
+    stringr,
+    stringi,
+    sp,
+    simFrame,
     sdcMicro,
-    gdata
+    truncnorm,
+    xlsx, 
+    tidyr
 Suggests:
-    shiny
-URL: https://github.com/unhcr/koboloadeR
+    ape,
+    bit64,
+    classInt,
+    curl,
+    car,
+    corrplot,
+    data.table,                       
+    digest,
+    dplyr,
+    forcats,
+    graphics,
+    gridExtra,
+    hexbin,
+    kableExtra,
+    knitr,
+    koRpus,
+    lubridate,
+    rmarkdown,
+    RColorBrewer,
+    rhandsontable,
+    scales,
+    tables,
+    vcd,
+    viridis,
+    testthat (>= 2.1.0),
+    zoo
+URL: https://github.com/unhcr/koboloadeR/docs
 BugReports: https://github.com/unhcr/koboloadeR/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
+VignetteBuilder: knitr
+Encoding: UTF-8
+SystemRequirements: Java (>= 8)

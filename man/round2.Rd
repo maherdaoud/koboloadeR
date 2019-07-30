@@ -7,12 +7,15 @@
 round2(x, n)
 }
 \arguments{
-\item{List}{of integer or numeric to be rounded}
+\item{x}{List of integer or numeric to be rounded}
 
-\item{Rounding}{level}
+\item{n}{Rounding level}
 }
 \value{
 rounded figure.
+}
+\description{
+Create roundup function
 }
 \examples{
 round2(x, n)
