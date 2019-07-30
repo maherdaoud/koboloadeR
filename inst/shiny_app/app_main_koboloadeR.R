@@ -299,6 +299,22 @@ server <- shinyServer(function(input, output, session) {
                      column(width = projectConfigurationTheme$yesNoInputWidth, offset = 0,
                             selectInput("doYouWantGenerateDataSelectInput", label = NULL,choices = c("-- select --","Yes","No"))
                      )
+                   ),
+                   conditionalPanel(
+                     condition = "input.doYouWantGenerateDataSelectInput == 'Yes'",
+                     column(width = 12, align = "center",
+                            actionButton("generateDataButton", "Generate Data", class = "uploadButton", style="margin: 15px 0px; height:100px; width:100%; font-size: x-large;")
+                     )
+                   ),
+                   conditionalPanel(
+                     condition = "input.doYouWantGenerateDataSelectInput == 'No'",
+                     column(width = 12, align = "center",
+                            infoBox(
+                              width = 12,strong("Warning"),h4("You cannot proceed without data file", align = "center")
+                              ,icon = icon("exclamation-triangle"),
+                              color = "yellow"
+                            )                     
+                     )
                    )
                    
                ),
@@ -871,7 +887,7 @@ server <- shinyServer(function(input, output, session) {
       }
       
     }, error = function(err) {
-      print("jkfhg8fsdjksdjioerf")
+      print("ffkslvdjkhsvjdfv")
       shinyalert("Error",
                  err$message,
                  type = "error",
@@ -883,7 +899,114 @@ server <- shinyServer(function(input, output, session) {
     })
   })
   
+  observeEvent(input$generateDataButton,{
+    tryCatch({
+      progress <- shiny::Progress$new()
+      progress$set(message = "Generating data files in progress...", value = 0)
+      on.exit(progress$close())
+      updateProgress <- function(value = NULL, detail = NULL) {
+        if (is.null(value)) {
+          value <- progress$getValue()
+          value <- value + (progress$getMax() - value) / 5
+        }
+        progress$set(value = value, detail = detail)
+      }
+      updateProgress()
+      result <- kobo_dummy()
+      if(class(result) == "try-error"){
+        shinyalert("Error",
+                   result,
+                   type = "error",
+                   closeOnClickOutside = FALSE,
+                   confirmButtonCol = "#ff4d4d",
+                   animation = FALSE,
+                   showConfirmButton = TRUE
+        )
+        return(FALSE)
+      }
+      
+      mainDir <- kobo_getMainDirectory()
+      settingsDF <- data.frame(name = character(),
+                               label = character(),
+                               options = character(),
+                               value = character(),
+                               path = character(),
+                               stringsAsFactors = FALSE
+      )
+      
+      for(i in 1:(length(projectConfigurationInfo$data[["beginRepeatList"]]))){
+
   
+        dataFile <- read.csv(paste0(mainDir,"/data/", projectConfigurationInfo$data[["beginRepeatList"]][i], ".csv"),
+                             header=TRUE, stringsAsFactors = FALSE)
+        
+        fileName <- paste("/",projectConfigurationInfo$data[["beginRepeatList"]][i], ".csv", sep="")
+        settingsDF <- rbind(settingsDF,  data.frame(name = projectConfigurationInfo$data[["beginRepeatList"]][i],
+                                                    label = paste("Name and the path of", projectConfigurationInfo$data[["beginRepeatList"]][i]),
+                                                    options = "",
+                                                    value = paste(projectConfigurationInfo$data[["beginRepeatList"]][i], ".csv", sep=""),
+                                                    path = paste0(mainDir(), "/data", fileName),
+                                                    stringsAsFactors = FALSE
+        )
+        )
+        if(projectConfigurationInfo$data[["beginRepeatList"]][i]=="MainDataFrame"){
+          projectConfigurationInfo$log[["data"]] <- TRUE
+          projectConfigurationInfo$data[["data"]] <- dataFile
+        }
+      }
+      
+      configInfo <- kobo_get_config()
+      configInfo <- configInfo[!configInfo$name %in% settingsDF$name, ]
+      settingsDF <- rbind(configInfo, settingsDF)
+      settingsDF <- settingsDF[!is.na(settingsDF$name),]
+      
+      result <- kobo_edit_form(analysisSettings = settingsDF )
+      
+      if(class(result) == "try-error"){
+        shinyalert("Error",
+                   result,
+                   type = "error",
+                   closeOnClickOutside = FALSE,
+                   confirmButtonCol = "#ff4d4d",
+                   animation = FALSE,
+                   showConfirmButton = TRUE
+        )
+        return(FALSE)
+      }
+      
+      
+      updateProgress()
+      projectConfigurationInfo$log[["subAndMainfiles"]] <- TRUE
+      projectConfigurationInfo$log[["isRecordSettingsCompleted"]] <- FALSE
+      projectConfigurationInfo$log[["isAnalysisPlanCompleted"]] <- FALSE
+      projectConfigurationInfo$log[["isDataProcessingCompleted"]] <- FALSE
+      shinyalert("Done, all files have been successfully generated",
+                 paste("You can find the files in",paste(mainDir(), "data", sep = "/", collapse = "/") )
+                 ,
+                 type = "success",
+                 closeOnClickOutside = FALSE,
+                 confirmButtonCol = "#28A8E2",
+                 animation = FALSE,
+                 showConfirmButton = TRUE
+      )
+      updateProgress()
+      progress$close()
+      
+      showModal(showInputOfInstanceID())
+      
+    }, error = function(err) {
+      print("ffrdsgfhgfhsfgjkkl")
+      shinyalert("Error",
+                 err$message,
+                 type = "error",
+                 closeOnClickOutside = FALSE,
+                 confirmButtonCol = "#ff4d4d",
+                 animation = FALSE,
+                 showConfirmButton = TRUE
+      )
+    })
+    
+  })
   
   
   
